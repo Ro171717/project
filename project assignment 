@@ -1,0 +1,81 @@
+import React, { useState } from "react";
+import {
+  Container,
+  TextField,
+  Typography,
+  Button,
+  AppBar,
+  Toolbar,
+  Box,
+  CssBaseline,
+  Switch,
+} from "@mui/material";
+
+function App() {
+  const [loanAmount, setLoanAmount] = useState("");
+  const [interestRate, setInterestRate] = useState("");
+  const [term, setTerm] = useState("");
+  const [monthlyPayment, setMonthlyPayment] = useState(null);
+
+  const calculateLoan = () => {
+    const principal = parseFloat(loanAmount);
+    const annualInterest = parseFloat(interestRate) / 100;
+    const months = parseInt(term) * 12;
+    const monthlyRate = annualInterest / 12;
+
+    const numerator = monthlyRate * Math.pow(1 + monthlyRate, months);
+    const denominator = Math.pow(1 + monthlyRate, months) - 1;
+    const payment = principal * (numerator / denominator);
+
+    setMonthlyPayment(payment.toFixed(2));
+  };
+
+  return (
+    <>
+      <CssBaseline />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Loan Calculator
+          </Typography>
+          <Switch color="default" />
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Loan Calculator Dashboard
+        </Typography>
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Loan Amount"
+            variant="outlined"
+            value={loanAmount}
+            onChange={(e) => setLoanAmount(e.target.value)}
+          />
+          <TextField
+            label="Interest Rate (%)"
+            variant="outlined"
+            value={interestRate}
+            onChange={(e) => setInterestRate(e.target.value)}
+          />
+          <TextField
+            label="Term (Years)"
+            variant="outlined"
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+          />
+          <Button variant="contained" onClick={calculateLoan}>
+            CALCULATE
+          </Button>
+          {monthlyPayment && (
+            <Typography variant="h6">
+              Monthly Payment: ₹{monthlyPayment}
+            </Typography>
+          )}
+        </Box>
+      </Container>
+    </>
+  );
+}
+
+export default App;
